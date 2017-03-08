@@ -170,7 +170,7 @@ public class ToolUtil {
   }
 
   public static String getHttpServerAbsolutePath() {
-    return Class.class.getClass().getResource("/").getPath() +  HttpServerPathConfig.getHttpServerPath();
+    return Thread.currentThread().getContextClassLoader().getResource("/").getPath() +  HttpServerPathConfig.getHttpServerPath();
   }
 
   /**

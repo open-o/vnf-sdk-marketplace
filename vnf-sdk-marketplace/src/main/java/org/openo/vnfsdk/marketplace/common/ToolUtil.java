@@ -123,7 +123,7 @@ public class ToolUtil {
    */
   public static String getTempDir(String dirName, String fileName) {
     // File tmpDir = new File(File.separator + dirName);
-    return Class.class.getClass().getResource("/").getPath() + dirName + File.separator
+    return Thread.currentThread().getContextClassLoader().getResource("/").getPath() + dirName + File.separator
         + fileName.replace(".csar", "");
   }
 

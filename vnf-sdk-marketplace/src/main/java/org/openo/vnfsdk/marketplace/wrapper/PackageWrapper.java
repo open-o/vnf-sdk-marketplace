@@ -15,22 +15,26 @@
  */
 package org.openo.vnfsdk.marketplace.wrapper;
 
+import java.io.BufferedInputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.InputStream;
-import java.util.List;
+import java.util.ArrayList;
 
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.openo.vnfsdk.marketplace.common.CommonConstant;
+import org.openo.vnfsdk.marketplace.common.RestUtil;
 import org.openo.vnfsdk.marketplace.common.ToolUtil;
 import org.openo.vnfsdk.marketplace.db.entity.PackageData;
+import org.openo.vnfsdk.marketplace.db.exception.MarketplaceResourceException;
 import org.openo.vnfsdk.marketplace.db.resource.PackageManager;
 import org.openo.vnfsdk.marketplace.entity.request.PackageBasicInfo;
 import org.openo.vnfsdk.marketplace.entity.response.PackageMeta;
-import org.openo.vnfsdk.marketplace.entity.response.PackageResponse;
 import org.openo.vnfsdk.marketplace.entity.response.UploadPackageResponse;
 import org.openo.vnfsdk.marketplace.filemanage.FileManagerFactory;
 import org.slf4j.Logger;
@@ -51,8 +55,45 @@ public class PackageWrapper {
     return packageWrapper;
   }
 
-  
+  /**
+   * query package list by condition.
+   * @param name package name
+   * @param provider package provider
+   * @param version package version
+   * @param deletionPending package deletionPending
+   * @param type package type
+   * @return Response
+   */
+  public Response queryPackageListByCond(String name, String provider, String version,
+      String deletionPending, String type) {
+    ArrayList<PackageData> dbresult = new ArrayList<PackageData>();
+    ArrayList<PackageMeta> result = new ArrayList<PackageMeta>();
+    LOG.info("query package info.name:" + name + " provider:" + provider + " version" + version
+        + " deletionPending" + deletionPending + " type:" + type);
+    try {
+      dbresult =
+          PackageManager.getInstance().queryPackage(name, provider, version, deletionPending, type);
+      result = PackageWrapperUtil.packageDataList2PackageMetaList(dbresult);
+      return Response.ok(ToolUtil.objectToString(result)).build();
+    } catch (MarketplaceResourceException e1) {
+      LOG.error("query package by csarId from db error ! " + e1.getMessage());
+      return RestUtil.getRestException(e1.getMessage());
+    }
+  }
 
+  /**
+   * query package by id.
+   * @param csarId package id
+   * @return Response
+   */
+  public Response queryPackageById(String csarId) {
+    PackageData dbResult = new PackageData();
+    PackageMeta result = new PackageMeta();
+    dbResult = PackageWrapperUtil.getPackageInfoById(csarId);
+    result = PackageWrapperUtil.packageData2PackageMeta(dbResult);
+    return Response.ok(ToolUtil.objectToString(result)).build();
+  }
+  
   /**
    * upload package.
    * @param uploadedInputStream inputStream
@@ -118,10 +159,6 @@ public class PackageWrapper {
 	      String destPath = File.separator + path;
 	      boolean uploadResult = FileManagerFactory.createFileManager().upload(tempDirName, destPath);
 	      if (uploadResult == true) {
-	        //TODO temp code for function test hooks to be deleted
-	      /*  PackageResponse res = HookService.functionTest(fileLocation,packageData.getCsarId());
-	        result.setFunctestReport(res.getReportPath());
-	        packageData.setReport(res.getReportPath());*/
 	        packateDbData = PackageManager.getInstance().addPackage(packageData);
 	        packateDbData = packageData;
 	        LOG.info("Store package data to database succed ! packateDbData = "
@@ -145,6 +182,78 @@ public class PackageWrapper {
 	    return Response.ok(ToolUtil.objectToString(result), MediaType.APPLICATION_JSON).build();
   }
 
+  /**
+   * delete package by package id.
+   * @param csarId package id
+   * @return Response
+   */
+  public Response delPackage(String csarId) {
+    LOG.info("delete package  info.csarId:" + csarId);
+    if (ToolUtil.isEmptyString(csarId)) {
+      LOG.error("delete package  fail, csarid is null");
+      return Response.serverError().build();
+    }
+    String packagePath = PackageWrapperUtil.getPackagePath(csarId);
+    if (packagePath == null) {
+      LOG.error("package path is null! ");
+    }
+    FileManagerFactory.createFileManager().delete(packagePath);
+    //delete package data from database
+    try {
+      PackageManager.getInstance().deletePackage(csarId);
+    } catch (MarketplaceResourceException e1) {
+      LOG.error("delete package  by csarId from db error ! " + e1.getMessage(), e1);
+    }
+    return Response.ok().build();
+  }
   
-    
+  /**
+   * download package by package id.
+   * @param csarId package id
+   * @return Response
+   */
+  public Response downloadCsarPackagesById(String csarId) {
+    PackageData packageData = PackageWrapperUtil.getPackageInfoById(csarId);
+    String packageName = null;
+    packageName = packageData.getName();
+    String path = "."+File.separatorChar+".."+File.separatorChar
+    		+ "webapps"+File.separatorChar+"Demo"+File.separatorChar+"WEB-INF"+File.separatorChar+
+    		"tomcat"+File.separatorChar+"webapps"+File.separatorChar+"ROOT"+File.separatorChar+packageData.getType()+File.separatorChar+
+    		packageData.getProvider()+File.separatorChar+packageName+File.separatorChar+"v1.0";
+    File csarFile = new File(path);
+    if (!csarFile.exists()) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
+
+    try {
+      String fileName=null;
+      String filePath = null;
+      for(File files:csarFile.listFiles())
+      {
+       if(files.isFile())
+       {
+    	   filePath = files.getAbsolutePath();
+    	   fileName = files.getName();
+    	   break;
+       }
+      }
+      InputStream fis = new BufferedInputStream(new FileInputStream(filePath));
+      return Response.ok(fis)
+          .header("Content-Disposition", "attachment; filename=\"" + fileName + "\"")
+          .build();
+    } catch (Exception e1) {
+      LOG.error("download vnf package fail.", e1);
+      return RestUtil.getRestException(e1.getMessage());
+    }
+  }
+  
+  /**
+   * get package file uri.
+   * @param csarId package id
+   * @param relativePath file relative path
+   * @return Response
+   */
+  public Response getCsarFileUri(String csarId) {
+      return downloadCsarPackagesById(csarId);
+  }
 }
