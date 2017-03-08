@@ -27,44 +27,44 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class PackageBasicInfo {
 
-  public String getProvider() {
-		return provider;
-	}
+    public String getProvider() {
+        return provider;
+    }
 
-	public void setProvider(String provider) {
-		this.provider = provider;
-	}
+    public void setProvider(String provider) {
+        this.provider = provider;
+    }
 
-	public EnumType getType() {
-		return type;
-	}
+    public EnumType getType() {
+        return type;
+    }
 
-	public void setType(EnumType type) {
-		this.type = type;
-	}
+    public void setType(EnumType type) {
+        this.type = type;
+    }
 
-	public String getVersion() {
-		return version;
-	}
+    public String getVersion() {
+        return version;
+    }
 
-	public void setVersion(String version) {
-		this.version = version;
-	}
+    public void setVersion(String version) {
+        this.version = version;
+    }
 
-	public String getFormat() {
-		return format;
-	}
+    public String getFormat() {
+        return format;
+    }
 
-	public void setFormat(String format) {
-		this.format = format;
-	}
+    public void setFormat(String format) {
+        this.format = format;
+    }
 
-private String provider;
+    private String provider;
 
-  private EnumType type;
+    private EnumType type;
 
-  private String version;
+    private String version;
 
-  private String format;
+    private String format;
 
 }

@@ -16,5 +16,6 @@ CREATE TABLE csar_package_table (
 	PROVIDER                 VARCHAR(300)       NULL,   
 	TYPE                     VARCHAR(300)       NULL,  
     DETAILS		             TEXT			    NULL,
-    REMARKS		             TEXT			    NULL
+    REMARKS		             TEXT			    NULL,
+    DOWNLOADCOUNT            INT                NULL
 );

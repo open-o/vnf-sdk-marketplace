@@ -13,35 +13,37 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.openo.vnfsdk.marketplace.entity.response;
+package org.openo.vnfsdk.marketplace.rest;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class CsarFileUriResponse {
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class RestResponse {
 
-    public String getDownloadUri() {
-        return downloadUri;
+    public Integer getStatusCode() {
+        return statusCode;
     }
 
-    public void setDownloadUri(String downloadUri) {
-        this.downloadUri = downloadUri;
+    public void setStatusCode(Integer statusCode) {
+        this.statusCode = statusCode;
     }
 
-    public String getLocalPath() {
-        return localPath;
+    public String getResult() {
+        return result;
     }
 
-    public void setLocalPath(String localPath) {
-        this.localPath = localPath;
+    public void setResult(String result) {
+        this.result = result;
     }
 
-    private String downloadUri;
+    private Integer statusCode;
 
-    private String localPath;
+    private String result;
 }

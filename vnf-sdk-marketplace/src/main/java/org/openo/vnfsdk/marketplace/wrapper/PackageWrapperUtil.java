@@ -126,14 +126,19 @@ public class PackageWrapperUtil {
    * @param basic basic infomation of package. include version, type and provider
    * @return package metadata
    */
-  public static PackageMeta getPackageMeta(String fileName, String fileLocation,
+  public static PackageMeta getPackageMeta(String packageId,String fileName, String fileLocation,
     PackageBasicInfo basic, String details) {
     PackageMeta packageMeta = new PackageMeta();
     long size = getPacakgeSize(fileLocation);
     packageMeta.setFormat(basic.getFormat());
-    String packageId = ToolUtil.generateId();
-    packageMeta.setName(fileName.replace(CommonConstant.CSAR_SUFFIX, ""));
+    
+    if(null == packageId)
+    {
+        packageId = ToolUtil.generateId();
+    }
     packageMeta.setCsarId(packageId);
+    
+    packageMeta.setName(fileName.replace(CommonConstant.CSAR_SUFFIX, ""));
     packageMeta.setType(basic.getType().toString());
     packageMeta.setVersion(basic.getVersion());
     packageMeta.setProvider(basic.getProvider());
@@ -222,6 +227,7 @@ public class PackageWrapperUtil {
     meta.setShortDesc(packageData.getShortDesc());
     meta.setVersion(packageData.getVersion());
     meta.setRemarks(packageData.getRemarks());
+    meta.setDownloadCount(packageData.getDownloadCount());
     return meta;
   }
 

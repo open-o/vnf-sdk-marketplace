@@ -49,4 +49,20 @@ public class CommonConstant {
   public static final  String REPORT_CSAR_DIR_NAME = "/reports";
   
   public static final String COMETD_CHANNEL_PACKAGE_DELETE = "/package/delete";
+  
+  public static final int ONBOARDING_THREAD_COUNT = 1;
+  public static final int SUCESS = 0;
+  public static final int FAILED = -1;
+  
+  public static class functionTest 
+  {    
+      public static final String FUNCTEST_URL = "/openoapi/vnfsdk/v1/functest/";
+      public static final String FUNCTEST_RESULT_URL = "/openoapi/vnfsdk/v1/functest/download/";
+      public static final String FUNCTEST_OPERTYPE_ID = "functiontest";
+      public static final String FUNCTEST_PACKAGE_EXISTS = "packageExists";
+      public static final String FUNCTEST_EXEC = "functestexec";
+      
+      private functionTest() {
+      }
+  }
 }

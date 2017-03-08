@@ -190,4 +190,9 @@ public class ToolUtil {
     }
     return dir.delete();
   }
+  
+  public static String getAppDeployPath()
+  {
+      return Thread.currentThread().getContextClassLoader().getResource("/").getPath();
+  }
 }

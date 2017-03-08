@@ -50,5 +50,7 @@ public interface IMarketplaceMapper {
     List<PackageData> getPackageData(String csarId);
 
 	void deletePackageData(String csarId);
+	
+	void updatePackageData(PackageData oPackageData);
 
 }

@@ -24,154 +24,167 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class PackageMeta {
 
-  public String getCsarId() {
-		return csarId;
-	}
+    private String csarId;
 
-	public void setCsarId(String csarId) {
-		this.csarId = csarId;
-	}
+    private String name;
 
-	public String getName() {
-		return name;
-	}
+    private String downloadUri;
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    private String report;
 
-	public String getDownloadUri() {
-		return downloadUri;
-	}
+    private String size;
 
-	public void setDownloadUri(String downloadUri) {
-		this.downloadUri = downloadUri;
-	}
+    private String version;
 
-	public String getSize() {
-		return size;
-	}
+    private String provider;
 
-	public void setSize(String size) {
-		this.size = size;
-	}
+    private String type;
 
-	public String getVersion() {
-		return version;
-	}
+    private String format;
 
-	public void setVersion(String version) {
-		this.version = version;
-	}
+    private boolean deletionPending;
 
-	public String getProvider() {
-		return provider;
-	}
+    private String createTime;
 
-	public void setProvider(String provider) {
-		this.provider = provider;
-	}
+    private String modifyTime;
 
-	public String getType() {
-		return type;
-	}
+    private String shortDesc;
 
-	public void setType(String type) {
-		this.type = type;
-	}
+    private int downloadCount;
 
-	public String getFormat() {
-		return format;
-	}
+    private String details;
 
-	public void setFormat(String format) {
-		this.format = format;
-	}
+    private String remarks;
 
-	public boolean isDeletionPending() {
-		return deletionPending;
-	}
+    public String getCsarId() {
+        return csarId;
+    }
 
-	public void setDeletionPending(boolean deletionPending) {
-		this.deletionPending = deletionPending;
-	}
+    public void setCsarId(String csarId) {
+        this.csarId = csarId;
+    }
 
-	public String getCreateTime() {
-		return createTime;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public void setCreateTime(String createTime) {
-		this.createTime = createTime;
-	}
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	public String getModifyTime() {
-		return modifyTime;
-	}
+    public String getDownloadUri() {
+        return downloadUri;
+    }
 
-	public void setModifyTime(String modifyTime) {
-		this.modifyTime = modifyTime;
-	}
+    public void setDownloadUri(String downloadUri) {
+        this.downloadUri = downloadUri;
+    }
 
-  private String csarId;
+    public String getSize() {
+        return size;
+    }
 
-  private String name;
+    public void setSize(String size) {
+        this.size = size;
+    }
 
-  private String downloadUri;
-  
-  private String report;
+    public String getVersion() {
+        return version;
+    }
 
-  private String size;
+    public void setVersion(String version) {
+        this.version = version;
+    }
 
-  private String version;
+    public String getProvider() {
+        return provider;
+    }
 
-  private String provider;
+    public void setProvider(String provider) {
+        this.provider = provider;
+    }
 
-  private String type;
+    public String getType() {
+        return type;
+    }
 
-  private String format;
+    public void setType(String type) {
+        this.type = type;
+    }
 
-  private boolean deletionPending;
+    public String getFormat() {
+        return format;
+    }
 
-  private String createTime;
+    public void setFormat(String format) {
+        this.format = format;
+    }
 
-  private String modifyTime;
+    public boolean isDeletionPending() {
+        return deletionPending;
+    }
 
-  private String shortDesc;
+    public void setDeletionPending(boolean deletionPending) {
+        this.deletionPending = deletionPending;
+    }
 
-  public String getShortDesc() {
-	return shortDesc;
-}
+    public String getCreateTime() {
+        return createTime;
+    }
 
-public void setShortDesc(String shortDesc) {
-	this.shortDesc = shortDesc;
-}
+    public void setCreateTime(String createTime) {
+        this.createTime = createTime;
+    }
 
-public String getDetails() {
-	return details;
-}
+    public String getModifyTime() {
+        return modifyTime;
+    }
 
-public void setDetails(String details) {
-	this.details = details;
-}
+    public void setModifyTime(String modifyTime) {
+        this.modifyTime = modifyTime;
+    }
 
-public String getRemarks() {
-	return remarks;
-}
 
-public void setRemarks(String remarks) {
-	this.remarks = remarks;
-}
 
-public String getReport() {
-	return report;
-}
+    public String getShortDesc() {
+        return shortDesc;
+    }
 
-public void setReport(String report) {
-	this.report = report;
-}
+    public void setShortDesc(String shortDesc) {
+        this.shortDesc = shortDesc;
+    }
 
-private String details;
+    public String getDetails() {
+        return details;
+    }
 
-  private String remarks;
+    public void setDetails(String details) {
+        this.details = details;
+    }
+
+    public String getRemarks() {
+        return remarks;
+    }
+
+    public void setRemarks(String remarks) {
+        this.remarks = remarks;
+    }
+
+    public String getReport() {
+        return report;
+    }
+
+    public void setReport(String report) {
+        this.report = report;
+    }
+
+
+    public int getDownloadCount() {
+        return downloadCount;
+    }
+
+    public void setDownloadCount(int downloadCount) {
+        this.downloadCount = downloadCount;
+    }
 
 }
