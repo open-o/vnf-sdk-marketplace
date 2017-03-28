@@ -133,5 +133,18 @@ public class MarketplaceDaoImpl implements IMarketplaceDao {
         }
 		
 	}
-    
+
+    public void updatePackageData(PackageData oPackageData) {
+        SqlSession session = sqlSessionFactory.openSession();
+        try {
+            IMarketplaceMapper mapper = session.getMapper(IMarketplaceMapper.class);
+            mapper.updatePackageData(oPackageData);
+            session.commit();
+        } catch(PersistenceException e) {
+            LOGGER.error("Exception caught {}", e);
+        } finally {
+            session.close();
+        }
+        
+    }    
 }

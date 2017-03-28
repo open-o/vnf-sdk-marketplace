@@ -13,35 +13,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.openo.vnfsdk.marketplace.entity.response;
+package org.openo.vnfsdk.marketplace.onboarding.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
-
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-public class CsarFileUriResponse {
-
-    public String getDownloadUri() {
-        return downloadUri;
+public class ResultKey 
+{
+	private String csarId;
+    private String operTypeId;
+    private String key;
+    public String getCsarId() {
+        return csarId;
     }
-
-    public void setDownloadUri(String downloadUri) {
-        this.downloadUri = downloadUri;
+    public void setCsarId(String csarId) {
+        this.csarId = csarId;
     }
-
-    public String getLocalPath() {
-        return localPath;
+    public String getOperTypeId() {
+        return operTypeId;
     }
-
-    public void setLocalPath(String localPath) {
-        this.localPath = localPath;
+    public void setOperTypeId(String operTypeId) {
+        this.operTypeId = operTypeId;
     }
-
-    private String downloadUri;
-
-    private String localPath;
+    public String getKey() {
+        return key;
+    }
+    public void setKey(String key) {
+        this.key = key;
+    }
 }

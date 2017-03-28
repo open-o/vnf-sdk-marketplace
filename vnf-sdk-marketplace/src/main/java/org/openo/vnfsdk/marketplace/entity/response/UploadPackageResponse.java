@@ -25,24 +25,24 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class UploadPackageResponse {
 
-  public String getCsarId() {
-		return csarId;
-	}
+    private String csarId;
 
-	public void setCsarId(String csarId) {
-		this.csarId = csarId;
-	}
+    private String functestReport;
+    
+    public String getCsarId() {
+        return csarId;
+    }
 
-private String csarId;
+    public void setCsarId(String csarId) {
+        this.csarId = csarId;
+    }
 
-private String functestReport;
+    public String getFunctestReport() {
+        return functestReport;
+    }
 
-public String getFunctestReport() {
-	return functestReport;
-}
-
-public void setFunctestReport(String functestReport) {
-	this.functestReport = functestReport;
-}
+    public void setFunctestReport(String functestReport) {
+        this.functestReport = functestReport;
+    }
 
 }

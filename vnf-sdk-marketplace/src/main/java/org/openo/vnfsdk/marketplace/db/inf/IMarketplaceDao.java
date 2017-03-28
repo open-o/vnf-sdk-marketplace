@@ -49,6 +49,8 @@ public interface IMarketplaceDao {
 
     List<PackageData> getPackageData(String csarID);
 
-	void deletePackageData(String csarId);
+	void deletePackageData(String csarId);	
+	   
+	void updatePackageData(PackageData oPackageData);
 
 }

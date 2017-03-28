@@ -144,6 +144,14 @@ public abstract class BaseHandler<T extends BaseData> {
     return num;
   }
 
+  @SuppressWarnings({"rawtypes", "unchecked"})
+  public void update(T data, String resouceType) throws MarketplaceResourceException {
+    logger.info("BaseHandler:start update data.info:" + MarketplaceDbUtil.objectToString(data));
+    IMarketplaceDao dao = new MarketplaceDaoImpl();
+    dao.updatePackageData((PackageData)data);
+    logger.info("update data end");
+  }
+  
   /**
    * check if the related object id exists in the system.
    * 
