@@ -2,9 +2,9 @@ CREATE DATABASE marketplaceDB;
 
 USE marketplaceDB;
 
-DROP TABLE IF EXISTS csar_package_table;
+DROP TABLE IF EXISTS CSAR_PACKAGE_TABLE;
 
-CREATE TABLE csar_package_table (
+CREATE TABLE CSAR_PACKAGE_TABLE (
 	CSARID                   VARCHAR(200)       NOT NULL,
 	DOWNLOADURI              VARCHAR(200)       NULL,
 	REPORT		             VARCHAR(200)       NULL,
