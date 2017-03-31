@@ -286,7 +286,7 @@ public class PackageWrapper {
         
         String packageName = packageData.getName();
         String path = "."+File.separatorChar+".."+File.separatorChar
-                + "webapps"+File.separatorChar+"Demo"+File.separatorChar+"WEB-INF"+File.separatorChar+
+                + "webapps"+File.separatorChar+"ROOT"+File.separatorChar+"WEB-INF"+File.separatorChar+
                 "tomcat"+File.separatorChar+"webapps"+File.separatorChar+"ROOT"+File.separatorChar+packageData.getType()+File.separatorChar+
                 packageData.getProvider()+File.separatorChar+ packageData.getCsarId() +File.separator +packageName+File.separatorChar+packageData.getVersion() 
                 +File.separator + packageName + ".csar";
