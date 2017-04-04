@@ -28,7 +28,6 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.codehaus.jackson.map.ObjectMapper;
-import org.openo.baseservice.roa.util.restclient.RestfulParametes;
 import org.openo.baseservice.roa.util.restclient.RestfulResponse;
 import org.openo.vnfsdk.marketplace.common.CommonConstant;
 import org.openo.vnfsdk.marketplace.common.JsonUtil;
@@ -41,14 +40,14 @@ public class MsbRegistration {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MsbRegistration.class);
 
-    private static final String MSB_REGISTION_FILE = "../msbconfig/msbRegistion.json";
+    private static final String MSB_REGISTION_FILE = "etc/microservice/marketplace_rest.json";
     private static final String MSB_REGISTION_URL = "/openoapi/microservices/v1/services?createOrUpdate=false";
     private static final String NODES = "nodes";
     private static final String IP = "ip";
     public static final int REPEAT_REG_TIME = 30 * 1000;
 
     public static int register() 
-    {
+    {               
         File file = new File(MSB_REGISTION_FILE);
         if(!file.exists()) 
         {
@@ -132,6 +131,6 @@ public class MsbRegistration {
 
     private static boolean isSuccess(int httpCode) 
     {
-        return httpCode / 100 == 2;
+        return (httpCode == 200 || httpCode == 201) ? true : false;
     }
 }
