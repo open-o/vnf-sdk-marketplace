@@ -65,4 +65,44 @@ public class CommonConstant {
       private functionTest() {
       }
   }
+  
+  public static class HttpContext {
+
+      public static final String CONTENT_TYPE = "Content-Type";
+
+      public static final String MEDIA_TYPE_JSON = "application/json;charset=UTF-8";
+
+      public static final String URL = "url";
+
+      public static final String METHOD_TYPE = "methodType";
+
+      private HttpContext() {
+      }
+  }
+  
+  public static class MethodType {
+
+      public static final String POST = "post";
+
+      public static final String DELETE = "delete";
+
+      public static final String PUT = "put";
+
+      public static final String GET = "get";
+
+      private MethodType() {
+      }
+  }
+  
+  public static class MsbRegisterCode {
+
+      public static final int MSDB_REGISTER_RETRIES = 100;
+      public static final int MSDB_REGISTER_RETRY_SLEEP = 15000;
+      
+      public static final int MSDB_REGISTER_FILE_NOT_EXISTS = 2;
+      public static final int MSDB_REGISTER_SUCESS = 0;
+      public static final int MSDB_REGISTER_FAILED = -1;
+      private MsbRegisterCode() {
+      }
+  }
 }

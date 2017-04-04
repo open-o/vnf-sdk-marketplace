@@ -20,16 +20,20 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
+import org.openo.baseservice.roa.util.restclient.RestfulResponse;
 import org.openo.vnfsdk.marketplace.common.CommonConstant;
 import org.openo.vnfsdk.marketplace.common.FileUtil;
 import org.openo.vnfsdk.marketplace.onboarding.entity.OnBoradingRequest;
 import org.openo.vnfsdk.marketplace.rest.RestConstant;
 import org.openo.vnfsdk.marketplace.rest.RestResponse;
 import org.openo.vnfsdk.marketplace.rest.RestfulClient;
+import org.openo.vnfsdk.marketplace.rest.RestfulUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -86,7 +90,7 @@ public class FunctionTestExceutor
         }      
         return funcTestId;               
     }
-    
+       
     /**
      * Interface to get Function Test Results
      * @param key
@@ -104,6 +108,37 @@ public class FunctionTestExceutor
         logger.info("Function Test Results for Key:" + key + "Response:" + rspGet.getResult());
         return  rspGet.getResult();
     }   
+    
+    /**
+     * Interface to get Function Test Results
+     * @param key
+     * @return
+     */
+    public static String getTestResultsByFuncTestKeyMsb(String key) 
+    {    
+        logger.info("getTestResultsByFuncTestKey for Function Test Results for :" + key);         
+       
+        Map<String, String> paramsMap = new HashMap<String, String>();       
+        paramsMap.put(CommonConstant.HttpContext.URL, CommonConstant.functionTest.FUNCTEST_RESULT_URL + key);  
+        paramsMap.put(CommonConstant.HttpContext.METHOD_TYPE, CommonConstant.MethodType.GET);          
+        
+        RestfulResponse response = RestfulUtil.sendRestRequest(paramsMap, null, null);
+        if(!checkValidRestResponse(response))
+        {
+            logger.error("Respone for getTestResultsByFuncTestKeyMsb is not valid !!!");
+            return null;
+        }
+        
+        if(null != response.getResponseContent())
+        {
+            logger.info("Function Test Results via MSB for Key:" + key + "Response:" + response.getResponseContent());            
+        }
+        else
+        {
+            logger.info("NULL Function Test Results via MSB for Key:" + key);  
+        }   
+        return response.getResponseContent();
+    }  
         
     /**
      * Check Response is Valid
@@ -115,12 +150,20 @@ public class FunctionTestExceutor
         if (rsp.getStatusCode() == null || rsp.getResult() == null 
                 || (RestConstant.RESPONSE_CODE_200 != rsp.getStatusCode() && RestConstant.RESPONSE_CODE_201 != rsp.getStatusCode()))
         {
-            logger.error("Failed Response for Function Test :" , rsp.toString());
             return false;
         }
         return true;
     }
 
+    private static boolean checkValidRestResponse(RestfulResponse rsp) 
+    {
+        if ((rsp == null) || (RestConstant.RESPONSE_CODE_200 != rsp.getStatus() && RestConstant.RESPONSE_CODE_201 != rsp.getStatus()))
+        {
+            return false;
+        }
+        return true;
+    }
+    
     @SuppressWarnings("deprecation")
     private static HttpEntity buildRequest(InputStream inputStream)
             throws FileNotFoundException {
