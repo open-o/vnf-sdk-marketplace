@@ -33,6 +33,9 @@ public class MsbRegister extends HttpServlet
 {
     private static final Logger logger = LoggerFactory.getLogger(MsbRegister.class);
     
+    /**
+     * Servlet Init function called by Framework
+     */
     public void init( ServletConfig servletConfig ) throws ServletException 
     {
         logger.info("VNF-SDK Market Place MSB Register called");
@@ -51,15 +54,16 @@ public class MsbRegister extends HttpServlet
     }
         
     public class MsbRegistrar
-    {        
+    {       
+        /**
+         * Interface top handle MSB Registration
+         */
         public void handleMsbRegistration() 
         {
+            logger.info("VNF-SDK Market Place microservice register start.");
             int retry = 0;
             while(CommonConstant.MsbRegisterCode.MSDB_REGISTER_RETRIES >= retry) 
-            {
-                retry++;
-                logger.info("VNF-SDK Market Place microservice register.retry:" + retry);
-                               
+            {                               
                 int retCode = MsbRegistration.register();
                 if(CommonConstant.MsbRegisterCode.MSDB_REGISTER_FILE_NOT_EXISTS == retCode)
                 {
@@ -69,14 +73,17 @@ public class MsbRegister extends HttpServlet
                 
                 if(CommonConstant.MsbRegisterCode.MSDB_REGISTER_SUCESS != retCode) 
                 {
-                    logger.warn("microservice register failed, sleep 15-Sec and try again.");
+                    logger.warn("microservice register failed, try again after(ms):" + CommonConstant.MsbRegisterCode.MSDB_REGISTER_RETRY_SLEEP);
                     threadSleep(CommonConstant.MsbRegisterCode.MSDB_REGISTER_RETRY_SLEEP);
                 } 
                 else 
                 {
                     logger.info("microservice register success !");
                     break;
-                }               
+                }    
+                
+                retry++;
+                logger.info("VNF-SDK Market Place microservice register [retry count]:" + retry);
             }
             logger.info("VNF-SDK Market Place microservice register end.");
         }

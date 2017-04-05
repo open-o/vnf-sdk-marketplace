@@ -46,6 +46,7 @@ public class RestfulUtil {
     {
         if(null == paramsMap) 
         {
+            LOGGER.error("sendRestResponse : Input validation failed !");
             return null;
         }
         

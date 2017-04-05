@@ -46,6 +46,10 @@ public class MsbRegistration {
     private static final String IP = "ip";
     public static final int REPEAT_REG_TIME = 30 * 1000;
 
+    /**
+     * Interface to handle MSB Registration
+     * @return
+     */
     public static int register() 
     {               
         File file = new File(MSB_REGISTION_FILE);
@@ -70,18 +74,20 @@ public class MsbRegistration {
 
         replaceLocalIp(msbRegistionBodyMap);
 
-
-        LOGGER.error("Registering body: " + JsonUtil.toJson(msbRegistionBodyMap));
+        LOGGER.info("Registering body: " + JsonUtil.toJson(msbRegistionBodyMap));
 
         return sendRequest(msbRegistionBodyMap) 
                 ? CommonConstant.MsbRegisterCode.MSDB_REGISTER_SUCESS 
                         : CommonConstant.MsbRegisterCode.MSDB_REGISTER_FAILED;
     }
 
-    
+    /**
+     * Send MSB Registration request
+     * @param msbRegistionBodyMap
+     * @return
+     */
     private static boolean sendRequest(Map<?, ?> msbRegistionBodyMap)  
     {
-        boolean bRegistionSuccess = false;
         LOGGER.info("Start registering to microservice bus");
         
         Map<String, String> paramsMap = new HashMap<String, String>();
@@ -90,18 +96,7 @@ public class MsbRegistration {
         String rawData = JsonUtil.toJson(msbRegistionBodyMap);
         
         RestfulResponse response = RestfulUtil.sendRestRequest(paramsMap, rawData, null);
-        if(isSuccess(response.getStatus())) 
-        {
-            LOGGER.info("Register successfully");
-            bRegistionSuccess = true;
-            return bRegistionSuccess;
-        } 
-        else 
-        {
-            LOGGER.warn("Register unsuccessfully and will reattempt the connection after " + REPEAT_REG_TIME
-                    + " seconds");
-        }
-        return bRegistionSuccess;
+        return isSuccess(response.getStatus()) ? true : false;
     }
     
    
