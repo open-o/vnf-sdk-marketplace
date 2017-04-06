@@ -256,6 +256,7 @@ public final class FileUtil {
         
         T obj = null;        
         ObjectMapper mapper = new ObjectMapper();
+        mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
         try 
         {
             obj = mapper.readValue(new File(fileAbsPath), clazz);

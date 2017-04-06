@@ -29,6 +29,8 @@ import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.openo.baseservice.roa.util.restclient.RestfulResponse;
 import org.openo.vnfsdk.marketplace.common.CommonConstant;
 import org.openo.vnfsdk.marketplace.common.FileUtil;
+import org.openo.vnfsdk.marketplace.msb.MsbDetails;
+import org.openo.vnfsdk.marketplace.msb.MsbDetailsHolder;
 import org.openo.vnfsdk.marketplace.onboarding.entity.OnBoradingRequest;
 import org.openo.vnfsdk.marketplace.rest.RestConstant;
 import org.openo.vnfsdk.marketplace.rest.RestResponse;
@@ -41,10 +43,6 @@ public class FunctionTestExceutor
 {
     private static final Logger logger = LoggerFactory.getLogger(FunctionTestExceutor.class);    
     
-    //To be Read from configuration file
-    public static final String msbip = "127.0.0.1";
-    public static final int msbport = 8701;
-
     private FunctionTestExceutor()
     {}
     
@@ -58,7 +56,14 @@ public class FunctionTestExceutor
         String packagePath = onBoradFuncTestReq.getPackagePath() + File.separator + onBoradFuncTestReq.getPackageName();
         logger.info("Package file path Function test:" + packagePath);
         
-        String funcTestId = null;
+        String funcTestId = null;       
+        MsbDetails oMsbDetails =  MsbDetailsHolder.getMsbDetails();
+        if(null == oMsbDetails)
+        {
+            logger.error("Failed to get MSB details during execFunctionTest !!!");
+            return funcTestId;
+        }
+             
         FileInputStream ifs = null;
         InputStream inStream = null;
         
@@ -68,7 +73,9 @@ public class FunctionTestExceutor
             inStream  = new BufferedInputStream(ifs);
             
             //IP and Port needs to be configured !!!
-            RestResponse rsp = RestfulClient.post(msbip, msbport, CommonConstant.functionTest.FUNCTEST_URL,buildRequest(inStream));
+            RestResponse rsp = RestfulClient.post(oMsbDetails.getDefaultServer().getHost(), 
+                                                    Integer.parseInt(oMsbDetails.getDefaultServer().getPort()), 
+                                                    CommonConstant.functionTest.FUNCTEST_URL,buildRequest(inStream));
             if(!checkValidResponse(rsp))
             {
                 return funcTestId;
@@ -98,8 +105,17 @@ public class FunctionTestExceutor
      */
     public static String getTestResultsByFuncTestKey(String key) 
     {    
+        MsbDetails oMsbDetails =  MsbDetailsHolder.getMsbDetails();
+        if(null == oMsbDetails)
+        {
+            logger.error("Failed to get MSB details during getTestResultsByFuncTestKey !!!");
+            return null;
+        }
+        
         logger.info("getTestResultsByFuncTestKey for Function Test Results for :" + key);         
-        RestResponse rspGet  = RestfulClient.get(msbip, msbport, CommonConstant.functionTest.FUNCTEST_RESULT_URL + key);
+        RestResponse rspGet  = RestfulClient.get(oMsbDetails.getDefaultServer().getHost(), 
+                                Integer.parseInt(oMsbDetails.getDefaultServer().getPort()), 
+                                CommonConstant.functionTest.FUNCTEST_RESULT_URL + key);
         if(!checkValidResponse(rspGet))
         {
             logger.error("Failed to convert String Json Response to TestResults list:" + rspGet.getResult());

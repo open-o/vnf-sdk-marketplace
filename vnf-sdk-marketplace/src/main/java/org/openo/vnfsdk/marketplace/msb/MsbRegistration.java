@@ -27,10 +27,13 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.http.HttpEntity;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.openo.baseservice.roa.util.restclient.RestfulResponse;
 import org.openo.vnfsdk.marketplace.common.CommonConstant;
 import org.openo.vnfsdk.marketplace.common.JsonUtil;
+import org.openo.vnfsdk.marketplace.rest.RestResponse;
+import org.openo.vnfsdk.marketplace.rest.RestfulClient;
 import org.openo.vnfsdk.marketplace.rest.RestfulUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -89,14 +92,23 @@ public class MsbRegistration {
     private static boolean sendRequest(Map<?, ?> msbRegistionBodyMap)  
     {
         LOGGER.info("Start registering to microservice bus");
-        
-        Map<String, String> paramsMap = new HashMap<String, String>();
-        paramsMap.put(CommonConstant.HttpContext.URL, MSB_REGISTION_URL);  
-        paramsMap.put(CommonConstant.HttpContext.METHOD_TYPE, CommonConstant.MethodType.POST);          
+
         String rawData = JsonUtil.toJson(msbRegistionBodyMap);
         
-        RestfulResponse response = RestfulUtil.sendRestRequest(paramsMap, rawData, null);
-        return isSuccess(response.getStatus()) ? true : false;
+        MsbDetails oMsbDetails =  MsbDetailsHolder.getMsbDetails();
+        if(null == oMsbDetails)
+        {
+            LOGGER.info("MSB Details is NULL , Registration Failed !!!");
+            return false;
+        }
+        
+        RestResponse oResponse = RestfulClient.sendPostRequest(oMsbDetails.getDefaultServer().getHost(),
+                                oMsbDetails.getDefaultServer().getPort(),
+                                MSB_REGISTION_URL, rawData);
+        
+        LOGGER.info("Response Code Received for MBS Registration:" + oResponse.getStatusCode());
+        
+        return isSuccess(oResponse.getStatusCode()) ? true : false;
     }
     
    
