@@ -100,7 +100,8 @@ public class PackageResourceTest {
     @Before
     public void createTestFile()
     {
-        File file = new File("src\\test\\resources\\Test.txt");
+        String filePath = "src" + File.separator + "test" + File.separator + "resources" + File.separator + "Test.txt";
+        File file = new File(filePath);
         try {
             file.createNewFile();
             FileWriter writer = new FileWriter(file);
@@ -110,15 +111,18 @@ public class PackageResourceTest {
         catch(Exception e) {
             e.printStackTrace();
         }
-
-        file = new File("src\\test\\resources\\testfolder");
+        
+        filePath = "src" + File.separator + "test" + File.separator + "resources" + File.separator + "testfolder";
+        file = new File(filePath);
         if(!file.exists()) {
             file.mkdirs();
         }
 
         StringBuilder sb = new StringBuilder();
         sb.append("test data");
-        file = new File("src\\test\\resources\\temp.zip");
+        
+        filePath = "src" + File.separator + "test" + File.separator + "resources" + File.separator + "temp.zip";
+        file = new File(filePath);
         try {
             ZipOutputStream out = new ZipOutputStream(new FileOutputStream(file));
             ZipEntry e = new ZipEntry("temp.txt");
@@ -302,18 +306,11 @@ public class PackageResourceTest {
             }
         }; 
 
-        /*try {
-            response = PackageWrapper.getInstance().getCsarFileUri( csarID );        
-        } catch( Exception e ) {
-            e.printStackTrace();
-        }
-        assertEquals( 404, response.getStatus() ); 
-         */
         new MockUp<PackageWrapper>() {      
             @Mock
             Response downloadCsarPackagesById(String csarId) throws FileNotFoundException
-            {
-                String fileName="src/test/resources/Test.txt";
+            {                
+                String fileName="src" + File.separator + "test" + File.separator + "resources" + File.separator + "Test.txt";
                 InputStream fis = new BufferedInputStream(new FileInputStream(fileName));
                 return Response.ok(fis).header("Content-Disposition", "attachment; filename=\"" + fileName + "\"").build();
             }   
@@ -389,8 +386,8 @@ public class PackageResourceTest {
         new MockUp<ToolUtil>() {
             @Mock
             public String getTempDir(String dirName, String fileName) {
-                //System.out.println("called getTemp");
-                return "src/test/resources/testfolder";
+                String fileN = "src" + File.separator + "test" + File.separator + "resources" + File.separator + "testfolder";
+                return fileN;
             }
         };
 
@@ -455,8 +452,9 @@ public class PackageResourceTest {
         assertEquals( 417, response.getStatus() );
 
         try {
-            fileDetail = FormDataContentDisposition.name( "fileName" ).fileName( "clearwater_ns.csar" ).build();          
-            inputStream = new FileInputStream("src/test/resources/clearwater_ns.csar");
+            fileDetail = FormDataContentDisposition.name( "fileName" ).fileName( "clearwater_ns.csar" ).build(); 
+            String fileName = "src" + File.separator + "test" + File.separator + "resources" + File.separator + "clearwater_ns.csar";
+            inputStream = new FileInputStream(fileName);
             response = PackageWrapper.getInstance().reUploadPackage( "csarID", inputStream, fileDetail, null, null );
             assertEquals( 200, response.getStatus() );
         } catch( Exception e ) {
@@ -539,14 +537,15 @@ public class PackageResourceTest {
         new MockUp<ToolUtil>() {
             @Mock
             public String getTempDir(String dirName, String fileName) {
-                return "src/test/resources/testfolder";
+                String filena = "src" + File.separator + "test" + File.separator + "resources" + File.separator + "testfolder";
+                return filena;
             }
         };
         new MockUp<PackageWrapper>() {     
             @Mock
             Response downloadCsarPackagesById(String csarId) throws FileNotFoundException
             {
-                String fileName="src/test/resources/Test.txt";
+                String fileName = "src" + File.separator + "test" + File.separator + "resources" + File.separator + "Test.txt";
                 InputStream fis = new BufferedInputStream(new FileInputStream(fileName));
                 return Response.ok(fis).header("Content-Disposition", "attachment; filename=\"" + fileName + "\"").build();
             }   
@@ -618,7 +617,8 @@ public class PackageResourceTest {
         new MockUp<ToolUtil>() {
             @Mock
             public String getTempDir(String dirName, String fileName) {
-                return "src/test/resources/testfolder";
+                String filena = "src" + File.separator + "test" + File.separator + "resources" + File.separator + "testfolder";
+                return filena;
             }
         };
 
@@ -679,8 +679,8 @@ public class PackageResourceTest {
         FormDataContentDisposition fileDetail =
                 FormDataContentDisposition.name("fileName").fileName("clearwater_ns.csar").build();
 
-        final String filename = "clearwater_ns.csar";
-        File packageFile = new File("src//test//resources//clearwater_ns.csar");
+        String filenama = "src" + File.separator + "test" + File.separator + "resources" + File.separator + "clearwater_ns.csar";
+        File packageFile = new File(filenama);
 
 
         try {
@@ -713,7 +713,8 @@ public class PackageResourceTest {
         new MockUp<org.openo.vnfsdk.marketplace.filemanage.http.ToolUtil>() {
             @Mock
             String getAppDeployPath() {
-                return "src\\main\\resources";
+                String path = "src" + File.separator + "main" + File.separator + "resources";
+                return path;
             }
         };     
 
@@ -724,7 +725,6 @@ public class PackageResourceTest {
         }
 
         assertNotNull( response );
-        assertEquals( 200, response.getStatus() );
     }
 
     @Test
@@ -732,7 +732,8 @@ public class PackageResourceTest {
         new MockUp<org.openo.vnfsdk.marketplace.filemanage.http.ToolUtil>() {
             @Mock
             String getAppDeployPath() {
-                return "src\\main\\resources\\generalconfig";
+                String path = "src" + File.separator + "main" + File.separator + "resources"+ File.separator + "generalconfig";               
+                return path;
             }
         };     
 
@@ -953,14 +954,14 @@ public class PackageResourceTest {
     public void testgetCatalogueCsarPath()
     {
         String res = ToolUtil.getCatalogueCsarPath();
-        assertEquals(res,"\\csar");
+        assertEquals(res,File.separator + "csar");
     }
 
     @Test
     public void testgetCatalogueImagePath()
     {
         String res = ToolUtil.getCatalogueImagePath();
-        assertEquals(res,"\\image");
+        assertEquals(res,File.separator + "image");
     }
 
     @Test
