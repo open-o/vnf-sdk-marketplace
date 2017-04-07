@@ -96,8 +96,8 @@ public class CommonConstant {
   
   public static class MsbRegisterCode {
 
-      public static final int MSDB_REGISTER_RETRIES = 100;
-      public static final int MSDB_REGISTER_RETRY_SLEEP = 15000;
+      public static final int MSDB_REGISTER_RETRIES = 12;
+      public static final int MSDB_REGISTER_RETRY_SLEEP = 10000;
       
       public static final int MSDB_REGISTER_FILE_NOT_EXISTS = 2;
       public static final int MSDB_REGISTER_SUCESS = 0;

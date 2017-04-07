@@ -16,89 +16,64 @@
 
 package org.openo.vnfsdk.marketplace.msb;
 
-import javax.servlet.http.HttpServlet;
-
 import org.openo.vnfsdk.marketplace.common.CommonConstant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.servlet.ServletConfig;
-import javax.servlet.ServletException;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-
-@SuppressWarnings("serial")
-public class MsbRegister extends HttpServlet 
+public class MsbRegister
 {
     private static final Logger logger = LoggerFactory.getLogger(MsbRegister.class);
     
     /**
-     * Servlet Init function called by Framework
+     * Interface top handle MSB Registration
      */
-    public void init( ServletConfig servletConfig ) throws ServletException 
+    public static void handleMsbRegistration() 
     {
-        logger.info("VNF-SDK Market Place MSB Register called");
-        super.init(servletConfig);
-
-        ExecutorService es = Executors.newFixedThreadPool(CommonConstant.ONBOARDING_THREAD_COUNT);
-        es.submit(new Callable<Integer>()
-        {
-            public Integer call() throws Exception 
+        logger.info("VNF-SDK Market Place microservice register start.");
+        int retry = 0;
+        while(CommonConstant.MsbRegisterCode.MSDB_REGISTER_RETRIES >= retry) 
+        {                               
+            int retCode = MsbRegistration.getInstance().register();
+            if(CommonConstant.MsbRegisterCode.MSDB_REGISTER_FILE_NOT_EXISTS == retCode)
             {
-                MsbRegistrar oMsbRegisterTimer = new MsbRegistrar();
-                oMsbRegisterTimer.handleMsbRegistration();
-                return CommonConstant.SUCESS;
+                logger.info("microservice register failed, MSB Register File Not Exists !");
+                break;
             }
-        });    
-    }
-        
-    public class MsbRegistrar
-    {       
-        /**
-         * Interface top handle MSB Registration
-         */
-        public void handleMsbRegistration() 
-        {
-            logger.info("VNF-SDK Market Place microservice register start.");
-            int retry = 0;
-            while(CommonConstant.MsbRegisterCode.MSDB_REGISTER_RETRIES >= retry) 
-            {                               
-                int retCode = MsbRegistration.register();
-                if(CommonConstant.MsbRegisterCode.MSDB_REGISTER_FILE_NOT_EXISTS == retCode)
-                {
-                    logger.info("microservice register failed, MSB Register File Not Exists !");
-                    break;
-                }
-                
-                if(CommonConstant.MsbRegisterCode.MSDB_REGISTER_SUCESS != retCode) 
-                {
-                    logger.warn("microservice register failed, try again after(ms):" + CommonConstant.MsbRegisterCode.MSDB_REGISTER_RETRY_SLEEP);
-                    threadSleep(CommonConstant.MsbRegisterCode.MSDB_REGISTER_RETRY_SLEEP);
-                } 
-                else 
-                {
-                    logger.info("microservice register success !");
-                    break;
-                }    
-                
-                retry++;
-                logger.info("VNF-SDK Market Place microservice register [retry count]:" + retry);
-            }
-            logger.info("VNF-SDK Market Place microservice register end.");
-        }
-        
-        private void threadSleep(int second) 
-        {
-            try 
+            
+            if(CommonConstant.MsbRegisterCode.MSDB_REGISTER_SUCESS != retCode) 
             {
-                Thread.sleep(second);
+                logger.warn("microservice register failed, try again after(ms):" + CommonConstant.MsbRegisterCode.MSDB_REGISTER_RETRY_SLEEP);
+                threadSleep(CommonConstant.MsbRegisterCode.MSDB_REGISTER_RETRY_SLEEP);
             } 
-            catch(InterruptedException error) 
+            else 
             {
-                logger.error("thread sleep error.errorMsg:", error);
-                Thread.currentThread().interrupt();
-            }
+                logger.info("microservice register success !");
+                break;
+            }    
+            
+            retry++;
+            logger.info("VNF-SDK Market Place microservice register [retry count]:" + retry);
+        }
+        logger.info("VNF-SDK Market Place microservice register end.");
+    }
+    
+    public static void handleMsbUnRegistration() 
+    {
+        logger.info("VNF-SDK Market Place microservice handleMsbUnRegistration Start.");
+        MsbRegistration.getInstance().unRegister();
+        logger.info("VNF-SDK Market Place microservice handleMsbUnRegistration end.");
+    }
+    
+    private static void threadSleep(int second) 
+    {
+        try 
+        {
+            Thread.sleep(second);
+        } 
+        catch(InterruptedException error) 
+        {
+            logger.error("thread sleep error.errorMsg:", error);
+            Thread.currentThread().interrupt();
         }
     }
 } 

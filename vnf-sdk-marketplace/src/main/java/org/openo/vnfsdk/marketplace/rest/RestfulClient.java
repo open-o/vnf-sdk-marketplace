@@ -116,7 +116,7 @@ public class RestfulClient {
     }
 
     public static RestResponse delete(String ip, int port, String url) {
-        return executeHttp(HttpMethod.GET, ip, port, url, null);
+        return executeHttp(HttpMethod.DELETE, ip, port, url, null);
     }
 
     public static RestResponse post(String ip, int port, String url, HttpEntity requestBody) {
