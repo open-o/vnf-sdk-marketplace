@@ -285,7 +285,7 @@ public class PackageWrapper {
         PackageData packageData = PackageWrapperUtil.getPackageInfoById(csarId);
         
         String packageName = packageData.getName();
-        String path = org.openo.vnfsdk.marketplace.filemanage.http.ToolUtil.getAppDeployPath() + File.separatorChar+"ROOT"+File.separatorChar+packageData.getType()+File.separatorChar+
+        String path = org.openo.vnfsdk.marketplace.filemanage.http.ToolUtil.getHttpServerAbsolutePath() +File.separatorChar+packageData.getType()+File.separatorChar+
                 packageData.getProvider()+File.separatorChar+ packageData.getCsarId() +File.separator +packageName+File.separatorChar+packageData.getVersion() 
                 +File.separator + packageName + ".csar";
         
