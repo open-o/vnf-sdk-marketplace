@@ -285,9 +285,7 @@ public class PackageWrapper {
         PackageData packageData = PackageWrapperUtil.getPackageInfoById(csarId);
         
         String packageName = packageData.getName();
-        String path = "."+File.separatorChar+".."+File.separatorChar
-                + "webapps"+File.separatorChar+"ROOT"+File.separatorChar+"WEB-INF"+File.separatorChar+
-                "tomcat"+File.separatorChar+"webapps"+File.separatorChar+"ROOT"+File.separatorChar+packageData.getType()+File.separatorChar+
+        String path = org.openo.vnfsdk.marketplace.filemanage.http.ToolUtil.getAppDeployPath() + File.separatorChar+"ROOT"+File.separatorChar+packageData.getType()+File.separatorChar+
                 packageData.getProvider()+File.separatorChar+ packageData.getCsarId() +File.separator +packageName+File.separatorChar+packageData.getVersion() 
                 +File.separator + packageName + ".csar";
         
@@ -295,7 +293,7 @@ public class PackageWrapper {
         
         File csarFile = new File(path);
         if (!csarFile.exists()) {
-            return Response.status(Status.NOT_FOUND).build();
+            return Response.status(Status.INTERNAL_SERVER_ERROR).build();
         }
 
         LOG.info("downloadCsarPackagesById ABS path is :  " + csarFile.getAbsolutePath());

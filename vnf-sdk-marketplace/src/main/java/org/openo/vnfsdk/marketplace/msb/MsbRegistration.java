@@ -181,7 +181,7 @@ public class MsbRegistration {
             LOGGER.info("Null Unregister Response for  " + url);
             return CommonConstant.MsbRegisterCode.MSDB_REGISTER_FAILED;
         }        
-        LOGGER.info("Unregister Response " + oResponse.getResult());        
+        LOGGER.info("Unregister Response " + oResponse.getStatusCode());        
         return isSuccess(oResponse.getStatusCode()) ? 
                 CommonConstant.MsbRegisterCode.MSDB_REGISTER_SUCESS : 
                     CommonConstant.MsbRegisterCode.MSDB_REGISTER_FAILED;
