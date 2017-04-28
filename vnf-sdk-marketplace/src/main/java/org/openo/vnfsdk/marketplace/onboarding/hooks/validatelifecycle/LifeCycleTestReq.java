@@ -13,37 +13,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.openo.vnfsdk.marketplace.onboarding.entity;
+package org.openo.vnfsdk.marketplace.onboarding.hooks.validatelifecycle;
 
-public class OnBoradingRequest {
+import java.util.List;
+
+public class LifeCycleTestReq 
+{
     private String csarId;
-    private String packageName;
-    private String packagePath;
-    private String csarIdCatalouge;
-    
-    public String getPackagePath() {
-        return packagePath;
-    }
-    public void setPackagePath(String packagePath) {
-        this.packagePath = packagePath;
-    }
+    private String labVimId;
+    private List<String> vimIds;
     public String getCsarId() {
         return csarId;
     }
     public void setCsarId(String csarId) {
         this.csarId = csarId;
     }
-    public String getPackageName() {
-        return packageName;
+    public String getLabVimId() {
+        return labVimId;
     }
-    public void setPackageName(String packageName) {
-        this.packageName = packageName;
+    public void setLabVimId(String labVimId) {
+        this.labVimId = labVimId;
     }
-    public String getCsarIdCatalouge() {
-        return csarIdCatalouge;
+    public List<String> getVimIds() {
+        return vimIds;
     }
-    public void setCsarIdCatalouge(String csarIdCatalouge) {
-        this.csarIdCatalouge = csarIdCatalouge;
+    public void setVimIds(List<String> vimIds) {
+        this.vimIds = vimIds;
     }
-
 }

@@ -27,16 +27,8 @@
          "operTypeId":"lifecycletest",
          "oper":[  
             {  
-               "operId":"lifecycle_id_1",
-               "operName":"LifeCycle Step 1 Execute"
-            },
-            {  
-               "operId":"lifecycle_id_2",
-               "operName":"LifeCycle Step 2 Execute"
-            },
-			{  
-               "operId":"lifecycle_id_3",
-               "operName":"LifeCycle Step 3 Execute"
+               "operId":"lifecycleTestexec",
+               "operName":"LifeCycle Test Execute"
             }
          ]
       },
