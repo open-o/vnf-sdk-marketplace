@@ -17,6 +17,7 @@ package org.openo.vnfsdk.marketplace.resource;
 
 import java.io.InputStream;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -25,11 +26,9 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
+import javax.ws.rs.core.*;
 
+import org.apache.commons.io.IOUtils;
 import org.eclipse.jetty.http.HttpStatus;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataParam;
@@ -54,6 +53,28 @@ import io.swagger.annotations.ApiResponses;
 @Path("/PackageResource")
 @Api(tags = {"Package Resource"})
 public class PackageResource {
+
+    @Path("/updatestatus")
+    @POST
+    @ApiOperation(value = "update validate and lifecycle test status", response = UploadPackageResponse.class)
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    @ApiResponses(value = {
+            @ApiResponse(code = HttpStatus.NOT_FOUND_404, message = "microservice not found",
+                    response = String.class),
+            @ApiResponse(code = HttpStatus.UNSUPPORTED_MEDIA_TYPE_415,
+                    message = "Unprocessable MicroServiceInfo Entity ", response = String.class),
+            @ApiResponse(code = HttpStatus.INTERNAL_SERVER_ERROR_500, message = "update  error",
+                    response = String.class)})
+    public Response updateValidateStatus(
+            @ApiParam(value = "http request body") @Context HttpServletRequest request,
+            @ApiParam(value = "http header") @Context HttpHeaders head
+    ) throws Exception {
+        InputStream input = request.getInputStream();
+        return PackageWrapper.getInstance().updateValidateStatus(input, head);
+
+    }
+
 
     @Path("/csars")
     @GET

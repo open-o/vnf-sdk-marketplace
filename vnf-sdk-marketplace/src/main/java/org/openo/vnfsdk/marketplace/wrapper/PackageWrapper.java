@@ -31,6 +31,10 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import net.sf.json.JSONObject;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.eclipse.jetty.util.StringUtil;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.openo.vnfsdk.marketplace.common.CommonConstant;
 import org.openo.vnfsdk.marketplace.common.FileUtil;
@@ -66,6 +70,23 @@ public class PackageWrapper {
             packageWrapper = new PackageWrapper();
         }
         return packageWrapper;
+    }
+
+    public Response updateValidateStatus(InputStream inputStream, HttpHeaders head) throws Exception
+    {
+        JSONObject result = new JSONObject();
+        LOG.info("updateValidateStatus  request Received !!!!");
+        String reqParam = IOUtils.toString(inputStream);
+        LOG.info("updateValidateStatus request param:"+reqParam);
+        if(StringUtils.isBlank(reqParam)) {
+            LOG.error("The updateValidateStatus request params can't be null");
+            return Response.status(Status.EXPECTATION_FAILED).build();
+        }
+
+        JSONObject reqObject =JSONObject.fromObject(reqParam);
+        //TODO:process requet params;  trigger function test
+        result.put("msg","SUCCESS");
+        return Response.ok(ToolUtil.objectToString(result), MediaType.APPLICATION_JSON).build();
     }
 
     /**
@@ -315,7 +336,6 @@ public class PackageWrapper {
     /**
      * get package file uri.
      * @param csarId package id
-     * @param relativePath file relative path
      * @return Response
      */
     public Response getCsarFileUri(String csarId) {
