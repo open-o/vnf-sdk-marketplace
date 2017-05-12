@@ -34,10 +34,10 @@ import javax.ws.rs.core.Response.Status;
 import net.sf.json.JSONObject;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.eclipse.jetty.util.StringUtil;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.openo.vnfsdk.marketplace.common.CommonConstant;
 import org.openo.vnfsdk.marketplace.common.FileUtil;
+import org.openo.vnfsdk.marketplace.common.JsonUtil;
 import org.openo.vnfsdk.marketplace.common.RestUtil;
 import org.openo.vnfsdk.marketplace.common.ToolUtil;
 import org.openo.vnfsdk.marketplace.db.entity.PackageData;
@@ -52,7 +52,10 @@ import org.openo.vnfsdk.marketplace.onboarding.entity.OnBoardingOperResult;
 import org.openo.vnfsdk.marketplace.onboarding.entity.OnBoardingResult;
 import org.openo.vnfsdk.marketplace.onboarding.entity.OnBoardingSteps;
 import org.openo.vnfsdk.marketplace.onboarding.entity.OnBoradingRequest;
+import org.openo.vnfsdk.marketplace.onboarding.hooks.functiontest.FunctionTestExceutor;
 import org.openo.vnfsdk.marketplace.onboarding.hooks.functiontest.FunctionTestHook;
+import org.openo.vnfsdk.marketplace.onboarding.hooks.validatelifecycle.LifecycleTestExceutor;
+import org.openo.vnfsdk.marketplace.onboarding.hooks.validatelifecycle.ValidateLifecycleTestResponse;
 import org.openo.vnfsdk.marketplace.onboarding.onboardmanager.OnBoardingHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -74,19 +77,51 @@ public class PackageWrapper {
 
     public Response updateValidateStatus(InputStream inputStream, HttpHeaders head) throws Exception
     {
-        JSONObject result = new JSONObject();
-        LOG.info("updateValidateStatus  request Received !!!!");
         String reqParam = IOUtils.toString(inputStream);
         LOG.info("updateValidateStatus request param:"+reqParam);
         if(StringUtils.isBlank(reqParam)) {
             LOG.error("The updateValidateStatus request params can't be null");
             return Response.status(Status.EXPECTATION_FAILED).build();
         }
-
-        JSONObject reqObject =JSONObject.fromObject(reqParam);
-        //TODO:process requet params;  trigger function test
+        
+        ValidateLifecycleTestResponse lyfValidateResp = JsonUtil.fromJson(reqParam, ValidateLifecycleTestResponse.class);
+        if(!checkOperationSucess(lyfValidateResp))
+        {
+            return Response.status(Status.EXPECTATION_FAILED).build();
+        }
+        
+        String funcTestResponse = FunctionTestExceutor.executeFunctionTest(reqParam);
+        if(null == funcTestResponse)
+        {
+            return Response.status(Status.EXPECTATION_FAILED).build();
+        }
+        
+        JSONObject funcTestRspObject = JSONObject.fromObject(funcTestResponse);   
+        if(!funcTestRspObject.get("status").equals(CommonConstant.SUCCESS_STR))
+        {
+            return Response.status(Status.EXPECTATION_FAILED).build();
+        }
+                
+        JSONObject result = new JSONObject(); 
         result.put("msg","SUCCESS");
         return Response.ok(ToolUtil.objectToString(result), MediaType.APPLICATION_JSON).build();
+    }
+    
+    private boolean checkOperationSucess(ValidateLifecycleTestResponse lyfValidateResp) 
+    {
+        boolean bOperStatus = false;
+        if(null == lyfValidateResp) 
+        {
+            LOG.error("ValidateLifecycleTestResponse  is NUll !!!");
+            return bOperStatus;
+        }
+        if(lyfValidateResp.getLifecycle_status().equalsIgnoreCase(CommonConstant.SUCCESS_STR) 
+                && lyfValidateResp.getValidate_status().equalsIgnoreCase(CommonConstant.SUCCESS_STR))
+        {
+            LOG.error("Lifecycle/Validation Response failed :" + lyfValidateResp.getLifecycle_status() + File.separator + lyfValidateResp.getValidate_status());
+            bOperStatus =  true;
+        }
+        return bOperStatus;
     }
 
     /**
@@ -214,6 +249,25 @@ public class PackageWrapper {
             boolean uploadResult = FileManagerFactory.createFileManager().upload(localDirName, destPath);
             if (uploadResult) 
             {
+                //Create OnBoarding Request 
+                //--------------------------
+                OnBoradingRequest oOnboradingRequest = new OnBoradingRequest();
+                oOnboradingRequest.setCsarId(packageId);
+                oOnboradingRequest.setPackageName(fileName);
+                oOnboradingRequest.setPackagePath(localDirName);
+                
+                //Upload the Package to CATALOUGE and get CSARID
+                //---------------------------------------------
+                String catalougeCsarId = LifecycleTestExceutor.uploadPackageToCatalouge(oOnboradingRequest);
+                if((null == catalougeCsarId) || catalougeCsarId.isEmpty())
+                {
+                    LOG.error("Failed to Upload Package to catalougeCsarId " + ToolUtil.objectToString(basicInfo));
+                    return Response.status(Status.INTERNAL_SERVER_ERROR).build();
+                }
+                oOnboradingRequest.setCsarIdCatalouge(catalougeCsarId);
+                LOG.info("catalougeCsarId :" + catalougeCsarId);
+
+                
                 //Update Default download count to -1
                 packageData.setCsarId(packageId);
                 packageData.setDownloadCount(-1);
@@ -223,13 +277,6 @@ public class PackageWrapper {
                 LOG.info("upload package file end, fileName:" + fileName);
 
                 result.setCsarId(packateDbData.getCsarId());
-
-                //Create OnBoarding Request 
-                //--------------------------
-                OnBoradingRequest oOnboradingRequest = new OnBoradingRequest();
-                oOnboradingRequest.setCsarId(packageId);
-                oOnboradingRequest.setPackageName(fileName);
-                oOnboradingRequest.setPackagePath(localDirName);
 
                 //Assign  OnBoarding Request to OnBoarding Handler
                 //------------------------------------------------
@@ -336,6 +383,7 @@ public class PackageWrapper {
     /**
      * get package file uri.
      * @param csarId package id
+     * @param relativePath file relative path
      * @return Response
      */
     public Response getCsarFileUri(String csarId) {

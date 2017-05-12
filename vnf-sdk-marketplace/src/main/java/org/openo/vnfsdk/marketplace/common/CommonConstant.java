@@ -50,9 +50,13 @@ public class CommonConstant {
   
   public static final String COMETD_CHANNEL_PACKAGE_DELETE = "/package/delete";
   
+  public static final String SUCCESS_STR = "SUCCESS";
+  
   public static final int ONBOARDING_THREAD_COUNT = 1;
   public static final int SUCESS = 0;
   public static final int FAILED = -1;
+  
+  public static final  String CATALOUGE_UPLOAD_URL = "/openoapi/catalog/v1/csars";
   
   public static class functionTest 
   {    
@@ -65,7 +69,16 @@ public class CommonConstant {
       private functionTest() {
       }
   }
-  
+    
+  public static class LifeCycleTest 
+  {    
+      public static final String LIFECYCLE_TEST_URL = "/openoapi/nslcm/v1/vnfpackage";
+      public static final String LIFECYCLE_TEST_OPERTYPE_ID = "lifecycletest";
+      public static final String LIFECYCLE_TEST_EXEC = "lifecycleTestexec";
+      private LifeCycleTest() {
+      }
+  }
+    
   public static class HttpContext {
 
       public static final String CONTENT_TYPE = "Content-Type";

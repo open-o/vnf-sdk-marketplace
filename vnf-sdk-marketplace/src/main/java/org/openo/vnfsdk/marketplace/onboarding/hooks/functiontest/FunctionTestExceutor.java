@@ -130,6 +130,35 @@ public class FunctionTestExceutor
      * @param key
      * @return
      */
+    public static String executeFunctionTest(String strJsonRequest) 
+    {    
+        logger.info("executeFunctionTest Test request Received:" + strJsonRequest);
+        MsbDetails oMsbDetails =  MsbDetailsHolder.getMsbDetails();
+        if(null == oMsbDetails)
+        {
+            logger.error("Failed to get MSB details during getTestResultsByFuncTestKey !!!");
+            return null;
+        }
+        
+        logger.info("getTestResultsByFuncTestKey for Function Test Results for :" + strJsonRequest);         
+        RestResponse rspGet  = RestfulClient.sendPostRequest(oMsbDetails.getDefaultServer().getHost(), 
+                                                            oMsbDetails.getDefaultServer().getPort(), 
+                                                            CommonConstant.functionTest.FUNCTEST_RESULT_URL,
+                                                            strJsonRequest);
+        if(!checkValidResponse(rspGet))
+        {
+            logger.error("Failed to convert String Json Response to TestResults list:" + rspGet.getResult());
+            return null;
+        }
+        logger.info("executeFunctionTest Function Test Result: " + rspGet.getResult());
+        return  rspGet.getResult();
+    } 
+    
+    /**
+     * Interface to get Function Test Results
+     * @param key
+     * @return
+     */
     public static String getTestResultsByFuncTestKeyMsb(String key) 
     {    
         logger.info("getTestResultsByFuncTestKey for Function Test Results for :" + key);         

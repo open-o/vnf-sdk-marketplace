@@ -20,6 +20,7 @@ import org.openo.vnfsdk.marketplace.db.resource.PackageManager;
 import org.openo.vnfsdk.marketplace.entity.EnumResult;
 import org.openo.vnfsdk.marketplace.onboarding.entity.OnBoradingRequest;
 import org.openo.vnfsdk.marketplace.onboarding.hooks.functiontest.FunctionTestHook;
+import org.openo.vnfsdk.marketplace.onboarding.hooks.validatelifecycle.LifecycleTestHook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,21 +29,23 @@ public final class OnBoardingHandler
     private static final Logger logger = LoggerFactory.getLogger(OnBoardingHandler.class);
 
     public void handleOnBoardingReq(OnBoradingRequest onBoradingReq) 
-    {
-        //Handle Package Validation
-        //-------------------------
-        
-        //Handle Package Life cycle
-        //-------------------------
+    {               
+        //Handle Package Life cycle/Validation
+        //------------------------------------
+        LifecycleTestHook oLifecycleTestHook = new LifecycleTestHook();
+        int iLifeCycleResponse = oLifecycleTestHook.exec(onBoradingReq);        
+        if(EnumResult.SUCCESS.getIndex() != iLifeCycleResponse)
+        {
+            logger.error("Onboarding falied for Package Id during Lifecycle Test:" + onBoradingReq.getCsarId());
+        } 
         
         //Handle Package FunctionTest
         //-------------------------
         FunctionTestHook oFunctionTestHook = new FunctionTestHook();
-        int iResponse = oFunctionTestHook.exec(onBoradingReq);
-            
-        if(EnumResult.SUCCESS.getIndex() != iResponse)
+        int iFuncTestResponse = oFunctionTestHook.exec(onBoradingReq);          
+        if(EnumResult.SUCCESS.getIndex() != iFuncTestResponse)
         {
-            logger.error("Onboarding falied for Package Id:" + onBoradingReq.getCsarId());
+            logger.error("Onboarding falied for Package Id during Function Test:" + onBoradingReq.getCsarId());
             return;
         }      
         
